@@ -22,11 +22,20 @@ async function run() {
     await client.connect();
 
     const db = client.db("habit_tracker_db");
-    const modelCollection = db.collection("habits");
+    const habitCollection = db.collection("habits");
 
-    app.get("/habits", async (req, res) => {
-      const result = await modelCollection.find().toArray();
-      res.send(result);
+    app.get("/habits/featured", async (req, res) => {
+      try {
+        const featuredHabits = await habitCollection
+          .find({ isPublic: true })
+          .sort({ createdAt: -1 })
+          .limit(6)
+          .toArray();
+        res.send(featuredHabits);
+      } catch (error) {
+        console.error("Error fetching featured habits:", error);
+        res.status(500).json({ message: "Error fetching featured habits" });
+      }
     });
 
     await client.db("admin").command({ ping: 1 });
