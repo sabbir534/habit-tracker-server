@@ -23,6 +23,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-serviceKey.json
+serviceAccountKey.json
 .vercel
 data.json
