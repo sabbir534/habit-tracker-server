@@ -38,6 +38,19 @@ async function run() {
       }
     });
 
+    app.get("/habits/public", async (req, res) => {
+      try {
+        const featuredHabits = await habitCollection
+          .find({ isPublic: true })
+          .sort({ createdAt: -1 })
+          .toArray();
+        res.send(featuredHabits);
+      } catch (error) {
+        console.error("Error fetching public habits:", error);
+        res.status(500).json({ message: "Error fetching public habits" });
+      }
+    });
+
     await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
