@@ -103,12 +103,11 @@ async function run() {
 
     app.get("/my-habits", verifyToken, async (req, res) => {
       try {
-        // req.user.email is attached by the verifyToken middleware
         const userEmail = req.user.email;
 
         const userHabits = await habitCollection
           .find({ creatorEmail: userEmail })
-          .sort({ createdAt: -1 }) // Show newest first
+          .sort({ createdAt: -1 })
           .toArray();
 
         res.send(userHabits);
@@ -118,16 +117,14 @@ async function run() {
       }
     });
 
-    // 2. DELETE a specific habit
     app.delete("/habits/:id", verifyToken, async (req, res) => {
       try {
         const id = req.params.id;
         const userEmail = req.user.email;
 
-        // Security check: Find the habit AND ensure it belongs to the logged-in user
         const result = await habitCollection.deleteOne({
           _id: new ObjectId(id),
-          creatorEmail: userEmail, // <-- This ensures they can only delete their own
+          creatorEmail: userEmail,
         });
 
         if (result.deletedCount === 0) {
@@ -144,14 +141,11 @@ async function run() {
       }
     });
 
-    // Add this inside your async function run() in index.js
-
     app.post("/habits/:id/complete", verifyToken, async (req, res) => {
       try {
         const id = req.params.id;
-        const userEmail = req.user.email; // From verifyToken
+        const userEmail = req.user.email;
 
-        // 1. Find the habit first to check duplicates and ownership
         const habit = await habitCollection.findOne({
           _id: new ObjectId(id),
           creatorEmail: userEmail,
@@ -163,7 +157,6 @@ async function run() {
           });
         }
 
-        // 2. Check for duplicate same-day entry
         const todayStr = new Date().toISOString().split("T")[0];
         const hasCompletedToday = habit.completionHistory.some((date) => {
           return new Date(date).toISOString().split("T")[0] === todayStr;
@@ -175,18 +168,15 @@ async function run() {
             .send({ message: "Habit already completed today" });
         }
 
-        // 3. Update the habit using $push
         const updateResult = await habitCollection.updateOne(
-          { _id: new ObjectId(id) }, // Filter
-          { $push: { completionHistory: new Date() } } // Update action
+          { _id: new ObjectId(id) },
+          { $push: { completionHistory: new Date() } }
         );
 
         if (updateResult.modifiedCount === 0) {
           throw new Error("Failed to update habit.");
         }
 
-        // 4. Fetch and return the *updated* habit
-        // (This is crucial for the client's state update)
         const updatedHabit = await habitCollection.findOne({
           _id: new ObjectId(id),
         });
@@ -199,14 +189,11 @@ async function run() {
       }
     });
 
-    // In your server's index.js file, inside async function run()
-
     app.get("/habits/:id", verifyToken, async (req, res) => {
       try {
         const id = req.params.id;
-        const userEmail = req.user.email; // From your verifyToken middleware
+        const userEmail = req.user.email;
 
-        // Find the habit by its ID
         const habit = await habitCollection.findOne({
           _id: new ObjectId(id),
         });
@@ -215,14 +202,13 @@ async function run() {
           return res.status(404).send({ message: "Habit not found" });
         }
 
-        // Security Check: Make sure the user owns this habit
+        // Security Check: Only allow the owner to see their own habit
         if (habit.creatorEmail !== userEmail) {
           return res
             .status(403)
             .send({ message: "Forbidden: You do not own this habit." });
         }
 
-        // If all checks pass, send the habit data
         res.send(habit);
       } catch (error) {
         console.error("Error fetching single habit:", error);
@@ -233,16 +219,14 @@ async function run() {
     app.put("/habits/:id", verifyToken, async (req, res) => {
       try {
         const id = req.params.id;
-        const userEmail = req.user.email; // From verifyToken
-        const updatedData = req.body; // { title, description, category, etc. }
+        const userEmail = req.user.email;
+        const updatedData = req.body;
 
-        // Security filter: find by ID AND ensure it belongs to the logged-in user
         const filter = {
           _id: new ObjectId(id),
           creatorEmail: userEmail,
         };
 
-        // Create the update document using $set
         const updateDoc = {
           $set: {
             title: updatedData.title,
@@ -257,13 +241,10 @@ async function run() {
         const result = await habitCollection.updateOne(filter, updateDoc);
 
         if (result.matchedCount === 0) {
-          // This means no doc was found with that ID *and* owned by that user
-          return res
-            .status(403)
-            .send({
-              message:
-                "Forbidden: You do not own this habit or it does not exist.",
-            });
+          return res.status(403).send({
+            message:
+              "Forbidden: You do not own this habit or it does not exist.",
+          });
         }
 
         res.status(200).send(result);
@@ -272,7 +253,6 @@ async function run() {
         res.status(500).send({ message: "Error updating habit" });
       }
     });
-    // Make sure this is *before* your client.db("admin").command...
 
     await client.db("admin").command({ ping: 1 });
     console.log(
