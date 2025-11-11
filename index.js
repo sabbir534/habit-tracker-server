@@ -202,14 +202,14 @@ async function run() {
           return res.status(404).send({ message: "Habit not found" });
         }
 
-        // Security Check: Only allow the owner to see their own habit
-        if (habit.creatorEmail !== userEmail) {
-          return res
-            .status(403)
-            .send({ message: "Forbidden: You do not own this habit." });
+        if (habit.isPublic === true || habit.creatorEmail === userEmail) {
+          res.send(habit);
+        } else {
+          return res.status(403).send({
+            message:
+              "Forbidden: You do not have permission to view this private habit.",
+          });
         }
-
-        res.send(habit);
       } catch (error) {
         console.error("Error fetching single habit:", error);
         res.status(500).send({ message: "Error fetching habit" });
