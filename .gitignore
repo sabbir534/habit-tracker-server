@@ -24,5 +24,6 @@ dist-ssr
 *.sln
 *.sw?
 serviceAccountKey.json
-.vercel
+vercel.json
 data.json
+.vercel

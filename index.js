@@ -47,7 +47,7 @@ const verifyToken = async (req, res, next) => {
 
 async function run() {
   try {
-    await client.connect();
+    //await client.connect();
 
     const db = client.db("habit_tracker_db");
     const habitCollection = db.collection("habits");
@@ -61,7 +61,7 @@ async function run() {
           .toArray();
         res.send(featuredHabits);
       } catch (error) {
-        console.error("Error fetching featured habits:", error);
+        //console.error("Error fetching featured habits:", error);
         res.status(500).json({ message: "Error fetching featured habits" });
       }
     });
@@ -74,7 +74,7 @@ async function run() {
           .toArray();
         res.send(featuredHabits);
       } catch (error) {
-        console.error("Error fetching public habits:", error);
+        //console.error("Error fetching public habits:", error);
         res.status(500).json({ message: "Error fetching public habits" });
       }
     });
@@ -96,7 +96,7 @@ async function run() {
 
         res.status(201).send(result);
       } catch (error) {
-        console.error("Error saving new habit:", error);
+        //console.error("Error saving new habit:", error);
         res.status(500).send({ message: "Error saving habit" });
       }
     });
@@ -112,7 +112,7 @@ async function run() {
 
         res.send(userHabits);
       } catch (error) {
-        console.error("Error fetching user's habits:", error);
+        //console.error("Error fetching user's habits:", error);
         res.status(500).json({ message: "Error fetching habits" });
       }
     });
@@ -136,7 +136,7 @@ async function run() {
 
         res.status(200).send(result);
       } catch (error) {
-        console.error("Error deleting habit:", error);
+        //console.error("Error deleting habit:", error);
         res.status(500).send({ message: "Error deleting habit" });
       }
     });
@@ -182,7 +182,7 @@ async function run() {
         });
         res.status(200).send(updatedHabit);
       } catch (error) {
-        console.error("Error marking habit complete:", error);
+        //console.error("Error marking habit complete:", error);
         res
           .status(500)
           .send({ message: error.message || "Error marking habit complete" });
@@ -211,7 +211,7 @@ async function run() {
           });
         }
       } catch (error) {
-        console.error("Error fetching single habit:", error);
+        //console.error("Error fetching single habit:", error);
         res.status(500).send({ message: "Error fetching habit" });
       }
     });
@@ -249,12 +249,12 @@ async function run() {
 
         res.status(200).send(result);
       } catch (error) {
-        console.error("Error updating habit:", error);
+        //console.error("Error updating habit:", error);
         res.status(500).send({ message: "Error updating habit" });
       }
     });
 
-    await client.db("admin").command({ ping: 1 });
+    //await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
@@ -268,5 +268,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Server is listening on port ${port}`);
+  //console.log(`Server is listening on port ${port}`);
 });

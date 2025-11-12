@@ -1,6 +1,6 @@
 # HabitTracker
 
-**Live Site URL:** [https://your-habittracker-live-site.netlify.app/](https://your-habittracker-live-site.netlify.app/)
+**Live Site URL:** [https://habit-tracker-server-one.vercel.app/](https://habit-tracker-server-one.vercel.app/)
 
 A full-stack (MERN) web application designed to help users build consistency and productivity by creating, tracking, and managing their daily habits. This repository contains the **backend server** code.
 
@@ -61,8 +61,8 @@ To run this server locally:
 1.  **Clone the repository:**
 
     ```bash
-    git clone [https://github.com/your-username/your-repo-name.git](https://github.com/your-username/your-repo-name.git)
-    cd your-repo-name
+    git clone [https://github.com/sabbir534/habit-tracker-server.git](https://github.com/sabbir534/habit-tracker-server.git)
+    cd habit-tracker-server
     ```
 
 2.  **Install dependencies:**
